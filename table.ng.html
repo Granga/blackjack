@@ -1,0 +1,80 @@
+<div class="panel panel-default form-horizontal">
+	<div class="panel-heading">
+		Black Jack
+	</div>
+	<div class="panel-body">
+		<div class="form-group form-group-sm">
+			<label for="txt-playerCount" class="col-sm-2 control-label">Number of players:</label>
+			<div class="col-sm-3">
+				<input type="text" ng-model="playerCount" ng-init="playerCount = 1" class="form-control" id="txt-playerCount">
+			</div>
+			<div class="col-sm-3">
+				<button ng-click="startNewGame()" class="btn btn-primary">New Game</button>
+			</div>
+		</div>
+
+		<div class="alert" ng-class="statusClass()">
+			Game status: <b>{{ game.status }}</b>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<table class="table table-bordered" id="my-table">
+					<thead>
+						<th>Player Type</th>
+						<th>Player Index</th>
+						<th>Cards</th>
+						<th>Total</th>
+						<th>Status</th>
+						<th>Actions</th>
+					</thead>
+					<tbody>
+						<tr ng-repeat="player in players">
+							<td>
+								{{ player.isDealer ? 'Dealer' : 'Player'}}
+							</td>
+							<td>
+								{{ $index }}
+							</td>
+
+							<td>
+								<span ng-repeat="card in player.hand.cards">{{ card.visual() }} &nbsp;&nbsp;&nbsp;</span>
+							</td>
+							
+							<td>
+								{{ player.hand.total() }}
+							</td>
+
+							<td>
+								{{ player.status }}
+							</td>
+
+							<td>
+								<div ng-if="!player.isDealer">
+									<button ng-click="hit(player)" ng-disabled="disableControls(player)" class="btn btn-sm btn-danger">Hit</button>
+									<button ng-click="stick(player)" ng-disabled="disableControls(player)" class="btn btn-sm btn-success">Stick</button>
+									disableControls : {{ disableControls(player) }}
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div>
+	Debug info:
+	Players:
+	<div ng-repeat="player in players">
+		 {{ player.cards }}
+		 <div>
+			 cardCount: {{ player.hand.cards.length }}
+		 </div>
+	</div>
+	
+	<br>
+	Deck len: {{ game.deck.cards.length }}
+</div>
