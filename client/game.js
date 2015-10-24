@@ -21,6 +21,9 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
     if (this.status != "active") return;
 
     this.currentIndex++;
+    if (this.currentIndex >= this.players.length)
+      this.currentIndex = 0;
+
     var p = this.currentPlayer();
 
     if (p.status == "busted") {
@@ -31,17 +34,16 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
     }
     else if (p.isDealer) {
       p.autoPlay();
-      if (p.status == "busted") {
-    				this.isActive = false;
-      }
+      this.next();
     }
     else {
       p.isOnTurn = true;
     }
+    this.status = this.checkGameStatus();
   }
 
   Game.prototype.checkGameStatus = function () {
-    var dealerBusted = this.dealer.hand.total() > 21;
+    var dealerBusted = this.getDealer().hand.total() > 21;
     if (dealerBusted) {
       this.winners = _.filter(this.humans, function (p) { return p.status == "playing" || p.status == "sticking"; })
       this.losers = _.filter(this.humans, function (p) { return p.status == "busted"; })
@@ -50,15 +52,18 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
 
     var allSticking = _.every(this.players, function (p) { return p.status == "busted" || p.status == "sticking"; });
     if (allSticking) {
-      var humanWinners = _.filter(this.humans, function (p) { return p.status == "sticking" && p.hand.total() > this.dealer.hand.total(); });
-      this.draws = _.filter(this.humans, function (p) { return p.hand.total() == this.dealer.hand.total(); });
-      this.winners = humanWinners.length > 0 ? humanWinners : [this.dealer];
+      var humanWinners = _.filter(this.humans, function (p) { return p.status == "sticking" && p.hand.total() > this.getDealer().hand.total(); });
+      this.draws = _.filter(this.humans, function (p) { 
+        //
+        return p.hand.total() == this.getDealer().hand.total();
+      });
+      this.winners = humanWinners.length > 0 ? humanWinners : [this.getDealer()];
       return "over";
     }
 
     var allHumansBusted = _.every(this.players, function (p) { return p.status == "busted"; });
     if (allHumansBusted) {
-      this.winners = [this.dealer];
+      this.winners = [this.getDealer()];
       this.losers = this.humans;
       return "over";
     }
@@ -81,6 +86,10 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
     players.push(new Player(this.deck, true));
 
     return players;
+  }
+  
+  Game.prototype.getDealer = function () {
+    return _.findWhere(this.players, { isDealer : true });
   }
 
   return Game;

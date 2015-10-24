@@ -6,6 +6,7 @@ angular.module("blackjack-game").factory("Player", ["Hand", function (Hand) {
       this.isOnTurn = false;
       this.status = "playing",
       this.deck = deck;
+      this.id = Helpers.guid();
     }
 
     Player.prototype.hit = function () {
@@ -27,7 +28,7 @@ angular.module("blackjack-game").factory("Player", ["Hand", function (Hand) {
       }
       else {
         //simple rule: 
-        var difference = 21 - this.total();
+        var difference = 21 - this.hand.total();
 
         if (difference > 5) {
           this.hit();
