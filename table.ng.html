@@ -6,7 +6,7 @@
 		<div class="form-group form-group-sm">
 			<label for="txt-playerCount" class="col-sm-2 control-label">Number of players:</label>
 			<div class="col-sm-3">
-				<input type="text" ng-model="playerCount" ng-init="playerCount = 1" class="form-control" id="txt-playerCount">
+				<input type="number" name="input" ng-model="playercount" min="0" max="99" required>
 			</div>
 			<div class="col-sm-3">
 				<button ng-click="startNewGame()" class="btn btn-primary">New Game</button>
@@ -14,7 +14,7 @@
 		</div>
 
 		<div class="alert" ng-class="statusClass()">
-			Game status: <b>{{ game.status }}</b> | Deck size: {{ game.deck.cards.length }}
+			Game is: <b>{{ game.status ? 'ACTIVE' : 'OVER' }}</b> | Deck size: {{ game.deck.cards.length }}
 		</div>
 
 		<div class="row">

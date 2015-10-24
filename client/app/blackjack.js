@@ -3,15 +3,12 @@ if (Meteor.isClient) {
   angular.module("blackjack-game", ["angular-meteor"]);
 
   angular.module("blackjack-game").controller("GameCtrl", ["$scope", "$log", "Game", function ($scope, $log, Game) {
-
-    $scope.playerCount = 2;
-
     $scope.game = {};
 
     $scope.startNewGame = function () {
-      $scope.game = new Game($scope.playerCount);
+      $scope.game = new Game($scope.playercount);
       $scope.players = $scope.game.players;
-      $log.debug("Started new game!");
+      $log.debug("Started new game with", $scope.playercount, "players");
     }
 
     $scope.hit = function (player) {
@@ -27,29 +24,15 @@ if (Meteor.isClient) {
     }
 
     $scope.disableControls = function (player) {
-      return !player.isOnTurn || player.status == "busted" || player.status == "sticking";
+      return !player.isOnTurn || !player.playing() || !$scope.game.status;
     }
 
     $scope.statusClass = function () {
-      switch ($scope.game.status) {
-        case "Dealer won":
-          return "alert-danger";
-          break;
-        case "Dealer lost":
-          return "alert-success";
-          break;
-        default:
-          return "alert-warning";
-          break;
-      }
+      return $scope.game.status ? "alert-success" : "alert-danger";
     }
-    
-    //for testing
-    $scope.startNewGame();
-
   }]);
 
-
+  //for debugging
   window.getScope = function () {
     return angular.element(document.getElementById("my-table")).scope();
   }

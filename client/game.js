@@ -7,7 +7,7 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
     this.dealer = _.last(this.players);
     this.humans = _.where(this.players, { isDealer: false });
     this.currentIndex = 0;
-    this.status = "active";
+    this.status = true;
 
     this.winners = [];
     this.draws = [];
@@ -17,8 +17,9 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
   }
 
   Game.prototype.next = function () {
+    console.log("NEXT!");
     this.status = this.checkGameStatus();
-    if (this.status != "active") return;
+    if (!this.status) return;
 
     this.currentIndex++;
     if (this.currentIndex >= this.players.length)
@@ -26,16 +27,14 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
 
     var p = this.currentPlayer();
 
-    if (p.status == "busted") {
-      this.next();
-    }
-    else if (p.status == "sticking") {
-      this.next();
-    }
-    else if (p.isDealer) {
+    if (!p.playing()) this.next();
+
+    if (p.isDealer) {
+      console.log("Player with ID", p.id, "is dealer. Performing automove.");
       p.autoPlay();
       this.next();
     }
+
     else {
       p.isOnTurn = true;
     }
@@ -43,34 +42,20 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
   }
 
   Game.prototype.checkGameStatus = function () {
-    var dealerBusted = this.getDealer().hand.total() > 21;
-    if (dealerBusted) {
-      this.winners = _.filter(this.humans, function (p) { return p.status == "playing" || p.status == "sticking"; })
-      this.losers = _.filter(this.humans, function (p) { return p.status == "busted"; })
-      return "over";
+    var dealer = this.getDealer();
+    var anybodyPlaying = _.some(this.players, function (p) { return p.playing(); });
+
+    if (dealer.busted()) {
+      this.publishResults(true);
+      return false;;
     }
 
-    var allSticking = _.every(this.players, function (p) { return p.status == "busted" || p.status == "sticking"; });
-    if (allSticking) {
-      var humanWinners = _.filter(this.humans, function (p) { return p.status == "sticking" && p.hand.total() > this.getDealer().hand.total(); });
-      this.draws = _.filter(this.humans, function (p) { 
-        //
-        return p.hand.total() == this.getDealer().hand.total();
-      });
-      this.winners = humanWinners.length > 0 ? humanWinners : [this.getDealer()];
-      return "over";
+    if (!anybodyPlaying) {
+      this.publishResults(false);
+      return false;
     }
 
-    var allHumansBusted = _.every(this.players, function (p) { return p.status == "busted"; });
-    if (allHumansBusted) {
-      this.winners = [this.getDealer()];
-      this.losers = this.humans;
-      return "over";
-    }
-
-    this.winners.length = this.losers.length = this.draws.length = 0;
-
-    return "active";
+    return true;
   }
 
   Game.prototype.currentPlayer = function () {
@@ -87,9 +72,43 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
 
     return players;
   }
-  
+
   Game.prototype.getDealer = function () {
-    return _.findWhere(this.players, { isDealer : true });
+    return _.findWhere(this.players, { isDealer: true });
+  }
+
+  Game.prototype.publishResults = function (dealerLost) {
+    var losers = [], draws = [], winners = [];
+    var dealer = this.getDealer();
+
+    var humansInGame = _.filter(this.humans, function (h) { return h.playing() || h.sticking(); });
+    var humansBusted = _.filter(this.humans, function (h) { return h.busted(); });
+
+    if (dealerLost) {
+      losers.push(dealer);
+      winners = humansInGame;
+    }
+    else {
+      _.each(humansInGame, function (h) {
+        var humanTotal = h.hand.total();
+        var dealerTotal = dealer.hand.total();
+        if (humanTotal == dealerTotal) {
+          draws.push(h);
+        }
+        else if (humanTotal > dealerTotal) {
+          winners.push(h);
+        }
+        else if (humanTotal < dealerTotal) {
+          losers.push(h);
+        }
+      });
+      losers.concat(humansBusted);
+    }
+
+    console.log("Game over, publishing results");
+    this.losers = losers;
+    this.draws = draws;
+    this.winners = winners;
   }
 
   return Game;
