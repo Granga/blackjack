@@ -6,7 +6,7 @@
 		<div class="form-group form-group-sm">
 			<label for="txt-playerCount" class="col-sm-2 control-label">Number of players:</label>
 			<div class="col-sm-3">
-				<input type="number" name="input" ng-model="playercount" min="0" max="99" required>
+				<input type="number" name="input" ng-init="$parent.playercount = 1" ng-model="$parent.playercount" min="0" max="6" required>
 			</div>
 			<div class="col-sm-3">
 				<button ng-click="startNewGame()" class="btn btn-primary">New Game</button>
@@ -14,7 +14,10 @@
 		</div>
 
 		<div class="alert" ng-class="statusClass()">
-			Game is: <b>{{ game.status ? 'ACTIVE' : 'OVER' }}</b> | Deck size: {{ game.deck.cards.length }}
+			Game is: <b> {{ gameStatus() }} </b>
+			<span class="pull-right" ng-show="gameStatus() == 'ACTIVE'">
+				Remaining cards in deck: {{ game.deck.cards.length }}
+			</span>
 		</div>
 
 		<div class="row">
@@ -58,31 +61,26 @@
 						</tr>
 					</tbody>
 				</table>
-				<div class="col-sm-3">
-					<label>Winners:</label>
-					<ul>
-						<li ng-repeat="player in game.winners">
-							{{ player.id }}
-						</li>
-					</ul>
+				<div ng-show="gameStatus() == 'OVER'">
+					<div class="col-sm-3">
+						<label>Winners:</label>
+						<ul>
+							<li ng-repeat="player in game.winners">
+								{{ player.id }}
+							</li>
+						</ul>
+						<span ng-show="game.winners.length == 0">None</span>
+					</div>
+					<div class="col-sm-3">
+						<label>Draw:</label>
+						<ul>
+							<li ng-repeat="player in game.draws">
+								{{ player.id }}
+							</li>
+						</ul>
+						<span ng-show="game.draws.length == 0">None</span>
+					</div>
 				</div>
-				<div class="col-sm-3">
-					<label>Draws:</label>
-					<ul>
-						<li ng-repeat="player in game.draws">
-							{{ player.id }}
-						</li>
-					</ul>
-				</div>
-				<div class="col-sm-3">
-					<label>Losers:</label>
-					<ul>
-						<li ng-repeat="player in game.losers">
-							{{ player.id }}
-						</li>
-					</ul>
-				</div>
-				<div class="col-sm-3"></div>
 			</div>
 		</div>
 	</div>

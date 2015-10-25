@@ -11,7 +11,6 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
 
     this.winners = [];
     this.draws = [];
-    this.losers = [];
 
     this.currentPlayer().isOnTurn = true;
   }
@@ -78,14 +77,13 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
   }
 
   Game.prototype.publishResults = function (dealerLost) {
-    var losers = [], draws = [], winners = [];
+    var winners = [];
+    var draws = [];
     var dealer = this.getDealer();
 
     var humansInGame = _.filter(this.humans, function (h) { return h.playing() || h.sticking(); });
-    var humansBusted = _.filter(this.humans, function (h) { return h.busted(); });
 
     if (dealerLost) {
-      losers.push(dealer);
       winners = humansInGame;
     }
     else {
@@ -99,14 +97,12 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", function (De
           winners.push(h);
         }
         else if (humanTotal < dealerTotal) {
-          losers.push(h);
+          //no need to note losers
         }
       });
-      losers.concat(humansBusted);
     }
 
     console.log("Game over, publishing results");
-    this.losers = losers;
     this.draws = draws;
     this.winners = winners;
   }

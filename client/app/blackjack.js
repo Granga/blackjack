@@ -3,7 +3,7 @@ if (Meteor.isClient) {
   angular.module("blackjack-game", ["angular-meteor"]);
 
   angular.module("blackjack-game").controller("GameCtrl", ["$scope", "$log", "Game", function ($scope, $log, Game) {
-    $scope.game = {};
+    $scope.game = null;
 
     $scope.startNewGame = function () {
       $scope.game = new Game($scope.playercount);
@@ -28,7 +28,14 @@ if (Meteor.isClient) {
     }
 
     $scope.statusClass = function () {
+      if($scope.game == null) return "alert-info";
       return $scope.game.status ? "alert-success" : "alert-danger";
+    }
+    
+    $scope.gameStatus = function(){
+      if($scope.game == null) return "NOT STARTED";
+      
+      return $scope.game.status ? "ACTIVE" : "OVER";
     }
   }]);
 
