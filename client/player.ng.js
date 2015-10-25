@@ -6,7 +6,7 @@ angular.module("blackjack-game").factory("Player", ["Hand", function (Hand) {
     this.isOnTurn = false;
     this.status = "playing",
     this.deck = deck;
-    this.id = Helpers.guid();
+    this.id = Helpers.makeId();
   }
 
   Player.prototype.hit = function () {
