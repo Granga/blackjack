@@ -1,0 +1,74 @@
+<div ng-show="gameStatus() == 'NOT STARTED'">
+  <div class="row" style="margin-bottom: 20px;">
+    <div class="col-sm-2 col-sm-push-5" ng-init="$parent.playerCount = 1">
+      <input type="number" ng-model="$parent.playerCount" min="1" max="6" class="form-control" placeholder="Players Count">
+    </div>
+  </div>
+  <div class="row">
+    <button class="btn btn-primary btn-start center-block" ng-click="startNewGame()">
+      START GAME
+    </button>
+  </div>
+</div>
+
+
+
+<div ng-if="gameStatus() != 'NOT STARTED'">
+
+  <div class="row text-center">
+    <h2>Dealer ({{ game.dealer.hand.total() }}) ({{ game.dealer.status}})</h2>
+    <div class="col-sm-4"></div>
+    <div class="col-sm-4 center-block">
+      <div ng-repeat="card in game.dealer.hand.cards" class="card" ng-style="{ color: cardColor(card) }">
+        <div class="body">
+          {{ card.visual() }}
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="covered card">
+        <div class="body">
+          <div>Deck</div>
+          {{ game.deck.cards.length }} cards
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-center" ng-if="gameStatus() == 'OVER'">
+    <button class="btn btn-primary btn-lg" ng-click="dealNewHand()">DEAL NEW HAND</button>
+  </div>
+  <hr>
+  <div class="humans">
+    <div ng-repeat="player in game.humans" class="player">
+      <h2>Player {{ player.id }} ({{ player.hand.total() }}) ({{ player.status }})</h2>
+      <fieldset ng-disabled="disableControls(player)" ng-if="!game.isBankrupt(player)">
+        <div class="player-cards">
+          <div class="row text-center">
+            <div ng-repeat="card in player.hand.cards" class="card" ng-style="{ color: cardColor(card) }">
+              <div class="body">
+                {{ card.visual() }}
+              </div>
+            </div>
+          </div>
+          <div class="center-block text-center">
+            <div style="font-size: 20px"><b>Bet: {{ player.bet }} chips</b>. Bank: {{ player.chips }} chips.</div>
+          </div>
+        </div>
+
+        <div class="row player-chips text-center">
+          <button ng-repeat="chip in chips" class="btn btn-lg chip" ng-click="betChip(chip)" ng-class="'chip' + chip" ng-show="chip < player.chips">
+            {{ chip }}
+          </button>
+        </div>
+
+        <div class="row player-buttons text-center">
+          <button ng-click="hit(player)" class="btn btn-lg btn-danger">Hit</button>
+          <button ng-click="stick(player)" class="btn btn-lg btn-warning">Stick</button>
+        </div>
+      </fieldset>
+      <div class="wasted-all" ng-if="game.isBankrupt(player)">
+        You spent them all, good thing they weren't real!
+      </div>
+    </div>
+  </div>
+</div>

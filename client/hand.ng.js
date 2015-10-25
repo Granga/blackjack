@@ -1,11 +1,13 @@
-angular.module("blackjack-game").factory("Hand", [function () {
-  var Hand = function (cards, deck) {
+angular.module("blackjack-game").factory("Hand", [function() {
+  var Hand = function(cards, deck) {
     this.cards = cards;
   }
 
-  Hand.prototype.total = function () {
-    var aces = _.filter(this.cards, function (c) { return c.num == 11; }).length;
-    var value = _.reduce(this.cards, function (memo, c) {
+  Hand.prototype.total = function() {
+    var aces = _.filter(this.cards, function(c) {
+      return c.num == 11;
+    }).length;
+    var value = _.reduce(this.cards, function(memo, c) {
       return memo + (c.num > 11 ? 10 : c.num);
     }, 0)
 
@@ -17,7 +19,7 @@ angular.module("blackjack-game").factory("Hand", [function () {
     return value;
   }
 
-  Hand.prototype.pushCard = function (card) {
+  Hand.prototype.pushCard = function(card) {
     this.cards.push(card);
   }
 

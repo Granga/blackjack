@@ -1,9 +1,102 @@
 /* CSS declarations go here */
+@card-border: #222;
+@bg: #ddd;
+@holland-red: rgb(233, 33, 17);
+@holland-blue: rgb(1, 49, 157);
+body {
+  background: @bg;
+  padding: 30px;
+}
+.btn-start {
+  font-size: 30px;
+}
+.card {
+  margin-right: 5px;
+  border-radius: 7px;
+  border: 3px solid @card-border;
+  display: inline-block;
+  background: white;
+  .body {
+    font-size: 40px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: 80px;
+    height: 100px;
+  }
+  &.covered {
+    .body {
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
 
-body{
-	background: #999;
+      //https://css-tricks.com/stripes-css/ with colors of Holland flag
+      background: repeating-linear-gradient(45deg, @holland-red, @holland-red 8px, @holland-blue 8px, @holland-blue 16px);
+    }
+  }
+}
+.chip {
+  border-radius: 50%;
+  margin-right: 20px;
+  height: 100px;
+  width: 100px;
+  font-size: 30px;
+  font-weight: bold;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  color: white;
+  border: 3px solid black;
+  &.chip5 {
+    background: #0c0;
+  }
+  &.chip20 {
+    background: #33c;
+  }
+  &.chip50 {
+    background: #f00;
+  }
+}
+.humans {
+  text-align: center;
+  overflow-x: auto;
+}
+.player {
+  margin-right: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #aaa;
+  border-radius: 15px;
+  width: 500px;
+  display: inline-block;
+  padding: 10px;
+  .player-cards {
+
+  }
+  .player-chips {
+    margin-top: 20px;
+  }
+  .player-buttons {
+    margin-top: 30px;
+    button {
+      &:first-child {
+        margin-right: 40px;
+      }
+      width: 100px;
+      height: 50px;
+      border: 1px solid black;
+    }
+  }
+}
+footer,
+header {
+  font-size: 10px;
+  font-style: italic;
+  padding-right: 10px;
+  background: lighten(@bg, 10%);
 }
 
-.container{
-	margin-top: 50px;
+.wasted-all{
+  height: 100%;
+  width: 100%;
+  font-size: 30px;
 }

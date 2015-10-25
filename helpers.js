@@ -1,10 +1,10 @@
-Helpers = function () {
+Helpers = function() {
 
 }
 
 
-Helpers.makeId = function () {
-  //http://stackoverflow.com/questions/1349404/generate-a-string-of-5-random-characters-in-javascript 
+Helpers.makeId = function() {
+  //http://stackoverflow.com/questions/1349404/generate-a-string-of-5-random-characters-in-javascript
   var text = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
