@@ -10,11 +10,7 @@
     </button>
   </div>
 </div>
-
-
-
 <div ng-if="gameStatus() != 'NOT STARTED'">
-
   <div class="row text-center">
     <h2>Dealer ({{ game.dealer.hand.total() }}) ({{ game.dealer.status}})</h2>
     <div class="col-sm-4"></div>
@@ -54,13 +50,11 @@
             <div style="font-size: 20px"><b>Bet: {{ player.bet }} chips</b>. Bank: {{ player.chips }} chips.</div>
           </div>
         </div>
-
         <div class="row player-chips text-center">
           <button ng-repeat="chip in chips" class="btn btn-lg chip" ng-click="betChip(chip)" ng-class="'chip' + chip" ng-show="chip < player.chips">
             {{ chip }}
           </button>
         </div>
-
         <div class="row player-buttons text-center">
           <button ng-click="hit(player)" class="btn btn-lg btn-danger">Hit</button>
           <button ng-click="stick(player)" class="btn btn-lg btn-warning">Stick</button>

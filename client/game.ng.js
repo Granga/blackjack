@@ -28,7 +28,7 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", func
 
     var p = this.currentPlayer();
 
-    if (!p.playing()) return this.next();
+    if (!p.isPlaying()) return this.next();
 
     if (p.isDealer) {
       console.log("Player with ID", p.id, "is dealer. Performing automove.");
@@ -43,13 +43,13 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", func
   Game.prototype.checkGameStatus = function() {
     var dealer = this.getDealer();
     var anybodyPlaying = _.some(this.players, function(p) {
-      return p.playing();
+      return p.isPlaying();
     });
     var allHumansBusted = _.every(this.humans, function(h){
-      return h.busted();
+      return h.isBusted();
     });
 
-    if (dealer.busted()) {
+    if (dealer.isBusted()) {
       this.publishResults(true);
       return false;;
     }
@@ -96,7 +96,7 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", func
     var dealer = this.getDealer();
 
     var humansInGame = _.filter(this.humans, function(h) {
-      return h.playing() || h.sticking();
+      return h.isPlaying() || h.isSticking();
     });
 
     if (dealerLost) {

@@ -26,7 +26,7 @@ if (Meteor.isClient) {
     }
 
     $scope.disableControls = function(player) {
-      return !player.isOnTurn || !player.playing() || !$scope.game.status;
+      return !player.isOnTurn || !player.isPlaying() || !$scope.game.status;
     }
 
     $scope.statusClass = function() {

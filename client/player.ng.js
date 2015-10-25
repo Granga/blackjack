@@ -24,15 +24,15 @@ angular.module("blackjack-game").factory("Player", ["Hand", function(Hand) {
     this.isOnTurn = false;
   }
 
-  Player.prototype.busted = function() {
+  Player.prototype.isBusted = function() {
     return this.status == "busted";
   }
 
-  Player.prototype.sticking = function() {
+  Player.prototype.isSticking = function() {
     return this.status == "sticking";
   }
 
-  Player.prototype.playing = function() {
+  Player.prototype.isPlaying = function() {
     if(this.hand.total() > 21) this.status = "busted";
     return this.status == "playing";
   }
