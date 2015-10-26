@@ -18,7 +18,7 @@ angular.module("blackjack-game").factory("Deck", ["Card", function(Card) {
     this.cards = [];
 
     //initialize the deck
-    this.reset();
+    this.createAndShuffleCards();
   }
 
   Deck.prototype.shuffle = function() {
@@ -29,7 +29,7 @@ angular.module("blackjack-game").factory("Deck", ["Card", function(Card) {
     return this.cards.pop()
   }
 
-  Deck.prototype.reset = function() {
+  Deck.prototype.createAndShuffleCards = function() {
     this.cards = _.shuffle(createDeckCards());
 
     function createDeckCards() {
@@ -51,6 +51,7 @@ angular.module("blackjack-game").factory("Deck", ["Card", function(Card) {
       return _deckCards;
     }
   }
+
 
   return Deck;
 

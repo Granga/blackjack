@@ -1,83 +1,82 @@
 angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", function(Deck, Player, $log) {
 
   var Game = function(numPlayers) {
-    this.numPlayers = numPlayers;
     this.deck = new Deck();
-    this.players = this.makePlayers();
-    this.dealer = _.last(this.players);
-    this.humans = _.where(this.players, {
-      isDealer: false
-    });
+    this.dealer = null;
+    this.humans = [];
+    this.players = this.makePlayers(numPlayers);
     this.currentIndex = 0;
-    this.status = true;
-
-    this.winners = [];
-    this.draws = [];
-
-    this.currentPlayer().isOnTurn = true;
+    this.getCurrentPlayer().isOnTurn = true;
+    this.hasEnded = false;
+    this.isInProgress = true;
   }
 
   Game.prototype.next = function() {
-    console.log("NEXT!");
-    this.status = this.checkGameStatus();
-    if (!this.status) return;
+    console.log("NEXT! said player", this.getCurrentPlayer().id);
+    if (this.checkEnded()) return;
 
     this.currentIndex++;
     if (this.currentIndex >= this.players.length)
       this.currentIndex = 0;
 
-    var p = this.currentPlayer();
+    var p = this.getCurrentPlayer();
 
-    if (!p.isPlaying()) return this.next();
+    if (!p.isPlaying()) {
+      $log.log("Player", p.id, "is not playing.");
+      return this.next();
+    }
 
     if (p.isDealer) {
-      console.log("Player with ID", p.id, "is dealer. Performing automove.");
-      p.autoPlay();
-      return this.next();
+      console.log("Player", p.id, "is dealer. Performing automove.");
+      p.doAutoplay();
     } else {
       p.isOnTurn = true;
     }
-    this.status = this.checkGameStatus();
   }
 
-  Game.prototype.checkGameStatus = function() {
-    var dealer = this.getDealer();
+  Game.prototype.checkEnded = function() {
+    if (this.hasEnded) return false;
+
     var anybodyPlaying = _.some(this.players, function(p) {
       return p.isPlaying();
     });
-    var allHumansBusted = _.every(this.humans, function(h){
+
+    var humansBusted = _.every(this.humans, function(h) {
       return h.isBusted();
     });
 
-    if (dealer.isBusted()) {
-      this.publishResults(true);
-      return false;;
+    $log.log("ANYBODY PLAYING:", anybodyPlaying, "HUMANS BUSTED", humansBusted, "DEALER BUSTED", this.dealer.isBusted());
+
+    this.hasEnded = this.dealer.isBusted() || humansBusted || !anybodyPlaying;
+
+    if (this.hasEnded) {
+      this.doPayout();
     }
 
-    if(allHumansBusted){
-      this.publishResults(false);
-      return false;
-    }
-
-    if (!anybodyPlaying) {
-      this.publishResults(false);
-      return false;
-    }
-
-    return true;
+    return this.hasEnded;
   }
 
-  Game.prototype.currentPlayer = function() {
+  Game.prototype.getStatus = function() {
+    return !this.hasEnded;
+  }
+
+  Game.prototype.getCurrentPlayer = function() {
     return this.players[this.currentIndex];
   }
 
-  Game.prototype.makePlayers = function() {
+  Game.prototype.getDealer = function() {
+    return this.dealer;
+  }
+
+  Game.prototype.makePlayers = function(numPlayers) {
     var players = [];
-    for (var i = 0; i < this.numPlayers; i++) {
-      players.push(new Player(this.deck, false, i + 1));
+    for (var i = 0; i < numPlayers; i++) {
+      this.humans.push(new Player(this.deck, false, i + 1, this, 100));
     }
     //the dealer
-    players.push(new Player(this.deck, true, i + 1));
+    this.dealer = new Player(this.deck, true, i + 1, this, 1000);
+    players = players.concat(this.humans);
+    players.push(this.dealer);
 
     return players;
   }
@@ -88,64 +87,26 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", func
     });
   }
 
-  Game.prototype.publishResults = function(dealerLost) {
-    if (!this.status) return;
-
-    var winners = [];
-    var draws = [];
-    var dealer = this.getDealer();
-
-    var humansInGame = _.filter(this.humans, function(h) {
-      return h.isPlaying() || h.isSticking();
-    });
-
-    if (dealerLost) {
-      winners = humansInGame;
-    } else {
-      _.each(humansInGame, function(h) {
-        var humanTotal = h.hand.total();
-        var dealerTotal = dealer.hand.total();
-        if (humanTotal == dealerTotal) {
-          draws.push(h);
-        } else if (humanTotal > dealerTotal) {
-          winners.push(h);
-        } else if (humanTotal < dealerTotal) {
-          //no need to note losers
-        }
-      });
-    }
-    $log.log("Game over. Publishing results.");
-
-    _.each(draws, function(d) {
-      d.chips += d.bet;
-    });
-
-    _.each(winners, function(d) {
-      d.chips += (2 * d.bet);
-    });
-
-    this.draws = draws;
-    this.winners = winners;
-  }
-
-  Game.prototype.dealNewHand = function() {
+  Game.prototype.deal = function() {
     var deck = this.deck = new Deck();
 
     _.each(this.players, function(p) {
-      p.newHand(deck);
+      p.deal(deck);
     });
 
     this.currentIndex = 0;
-    this.status = true;
-
-    this.winners = [];
-    this.draws = [];
-
-    this.currentPlayer().isOnTurn = true;
+    this.getCurrentPlayer().isOnTurn = true;
+    this.hasEnded = false;
   }
 
-  Game.prototype.isBankrupt = function (player){
-    return !this.status && player.chips <= 0;
+  Game.prototype.doPayout = function() {
+    _.each(this.players, function(p) {
+      if (p.getStatus() == "won") {
+        p.chips += (p.bet * 2);
+      } else if (p.getStatus() == "draw") {
+        p.chips += p.bet;
+      }
+    });
   }
 
   return Game;

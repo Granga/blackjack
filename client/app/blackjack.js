@@ -14,34 +14,25 @@ if (Meteor.isClient) {
     }
 
     $scope.hit = function(player) {
-      player.hit();
-      player.isOnTurn = false;
-      $scope.game.next();
+      player.doHit();
     }
 
     $scope.stick = function(player) {
-      player.stick();
-      player.isOnTurn = false;
-      $scope.game.next();
+      player.doStick();
     }
 
     $scope.disableControls = function(player) {
-      return !player.isOnTurn || !player.isPlaying() || !$scope.game.status;
-    }
-
-    $scope.statusClass = function() {
-      if ($scope.game == null) return "alert-info";
-      return $scope.game.status ? "alert-success" : "alert-danger";
+      return !player.isOnTurn || !player.isPlaying() || !$scope.game.getStatus();
     }
 
     $scope.gameStatus = function() {
       if ($scope.game == null) return "NOT STARTED";
 
-      return $scope.game.status ? "ACTIVE" : "OVER";
+      return $scope.game.getStatus() ? "ACTIVE" : "OVER";
     }
 
     $scope.betChip = function(chip) {
-      $scope.game.currentPlayer().betAmount(chip);
+      $scope.game.getCurrentPlayer().doBet(chip);
     }
 
     $scope.cardColor = function(card) {
@@ -50,8 +41,8 @@ if (Meteor.isClient) {
       else return "black";
     }
 
-    $scope.dealNewHand = function(){
-      this.game.dealNewHand();
+    $scope.deal = function() {
+      this.game.deal();
     }
   }]);
 

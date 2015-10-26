@@ -12,7 +12,7 @@
 </div>
 <div ng-if="gameStatus() != 'NOT STARTED'">
   <div class="row text-center">
-    <h2>Dealer ({{ game.dealer.hand.total() }}) ({{ game.dealer.status}})</h2>
+    <h2>Dealer ({{ game.dealer.hand.total() }}) ({{ game.dealer.getStatus() }})</h2>
     <div class="col-sm-4"></div>
     <div class="col-sm-4 center-block">
       <div ng-repeat="card in game.dealer.hand.cards" class="card" ng-style="{ color: cardColor(card) }">
@@ -31,12 +31,12 @@
     </div>
   </div>
   <div class="text-center" ng-if="gameStatus() == 'OVER'">
-    <button class="btn btn-primary btn-lg" ng-click="dealNewHand()">DEAL NEW HAND</button>
+    <button class="btn btn-primary btn-lg" ng-click="deal()">DEAL NEW HAND</button>
   </div>
   <hr>
   <div class="humans">
     <div ng-repeat="player in game.humans" class="player">
-      <h2>Player {{ player.id }} ({{ player.hand.total() }}) ({{ player.status }})</h2>
+      <h2>Player {{ player.id }} ({{ player.hand.total() }}) ({{ player.getStatus() }})</h2>
       <fieldset ng-disabled="disableControls(player)" ng-if="!game.isBankrupt(player)">
         <div class="player-cards">
           <div class="row text-center">
@@ -51,7 +51,7 @@
           </div>
         </div>
         <div class="row player-chips text-center">
-          <button ng-repeat="chip in chips" class="btn btn-lg chip" ng-click="betChip(chip)" ng-class="'chip' + chip" ng-show="chip < player.chips">
+          <button ng-repeat="chip in chips" class="btn btn-lg chip" ng-click="betChip(chip)" ng-class="'chip' + chip" ng-show="chip <= player.chips">
             {{ chip }}
           </button>
         </div>
