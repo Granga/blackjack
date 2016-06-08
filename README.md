@@ -1,5 +1,5 @@
 # blackjack
 
-http://blackjack-one.meteor.com
+https://blackjack-one.herokuapp.com/
 
-To run locally, you need to install MeteorJS.
+Made to practice MeteorJS.
