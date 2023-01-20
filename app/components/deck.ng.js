@@ -1,4 +1,4 @@
-angular.module("blackjack-game").factory("Deck", ["Card", function(Card) {
+angular.module("blackjack-game").factory("Deck", ["Card", function (Card) {
 
   var cardSuits = [{
     name: "Spades",
@@ -14,22 +14,22 @@ angular.module("blackjack-game").factory("Deck", ["Card", function(Card) {
     icon: "♣"
   }];
 
-  var Deck = function() {
+  var Deck = function () {
     this.cards = [];
 
     //initialize the deck
     this.createAndShuffleCards();
   }
 
-  Deck.prototype.shuffle = function() {
+  Deck.prototype.shuffle = function () {
     this.cards = _.shuffle(this.cards);
   }
 
-  Deck.prototype.pickNextCard = function() {
+  Deck.prototype.pickNextCard = function () {
     return this.cards.pop()
   }
 
-  Deck.prototype.createAndShuffleCards = function() {
+  Deck.prototype.createAndShuffleCards = function () {
     this.cards = _.shuffle(createDeckCards());
 
     function createDeckCards() {

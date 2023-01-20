@@ -1,0 +1,36 @@
+<html lang="en">
+<head>
+    <title>Black Jack Game</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet"
+          href="libs/bootstrap.css"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.css"
+          integrity="sha512-DD6Lm09YDHzhW3K4eLJ9Y7sFrBwtCF+KuSWOLYFqKsZ6RX4ifCu9vWqM4R+Uy++aBWe6wD4csgQRzGKp5vP6tg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer"/>
+    <link rel="stylesheet"
+          href="app/blackjack.css">
+
+    <script src="libs/angular.js"></script>
+    <script src="libs/underscore.js"></script>
+    <script src="app/helpers.js"></script>
+    <script src="app/blackjack.js"></script>
+    <script src="app/components/card.ng.js"></script>
+    <script src="app/components/deck.ng.js"></script>
+    <script src="app/components/game.ng.js"></script>
+    <script src="app/components/hand.ng.js"></script>
+    <script src="app/components/player.ng.js"></script>
+</head>
+
+<body ng-app="blackjack-game"
+      ng-controller="GameCtrl">
+<div ng-include="'app/ui.ng.html'"
+     id="blackjack-ui"></div>
+<footer class="navbar-fixed-bottom text-right">Made by Risto (<a href="https://github.com/Granga/blackjack">Source on
+    GitHub</a>)
+</footer>
+
+</body>
+</html>

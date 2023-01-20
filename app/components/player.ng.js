@@ -1,6 +1,6 @@
-angular.module("blackjack-game").factory("Player", ["Hand", function(Hand) {
+angular.module("blackjack-game").factory("Player", ["Hand", function (Hand) {
 
-  var Player = function(deck, isDealer, id, game, chips) {
+  var Player = function (deck, isDealer, id, game, chips) {
     this.hand = new Hand([deck.pickNextCard(), deck.pickNextCard()]);
     this.isDealer = isDealer;
     this.isOnTurn = false;
@@ -14,7 +14,7 @@ angular.module("blackjack-game").factory("Player", ["Hand", function(Hand) {
     this.doBet(10); //minimal bet
   }
 
-  Player.prototype.getStatus = function() {
+  Player.prototype.getStatus = function () {
     if (this.isPlaying()) {
       return this.game.getStatus() ? "playing" : "won";
     }
@@ -30,7 +30,7 @@ angular.module("blackjack-game").factory("Player", ["Hand", function(Hand) {
     }
   }
 
-  Player.prototype.doHit = function() {
+  Player.prototype.doHit = function () {
     this.hand.pushCard(this.deck.pickNextCard());
     if (this.hand.total() > 21) {
       this.status = "busted";
@@ -39,47 +39,49 @@ angular.module("blackjack-game").factory("Player", ["Hand", function(Hand) {
     this.game.next();
   }
 
-  Player.prototype.doStick = function() {
+  Player.prototype.doStick = function () {
     this.sticking = true;
     this.isOnTurn = false;
     this.game.next();
   }
 
-  Player.prototype.doBet = function(amount) {
+  Player.prototype.doBet = function (amount) {
     if (this.isDealer || this.chips < amount) return;
     this.bet += amount;
     this.chips -= amount;
   }
 
-  Player.prototype.isBusted = function() {
+  Player.prototype.isBusted = function () {
     return this.hand.total() > 21;
   }
 
-  Player.prototype.isSticking = function() {
+  Player.prototype.isSticking = function () {
     return this.sticking;
   }
 
-  Player.prototype.isPlaying = function() {
+  Player.prototype.isPlaying = function () {
     return !this.isBusted() && !this.isSticking();
   }
 
-  Player.prototype.doAutoplay = function() {
+  Player.prototype.doAutoplay = function () {
     if (this.hand.total() < 17) {
       //dealer must hit until has a value of 17 (from wikipedia)
       this.doHit();
-    } else {
+    }
+    else {
       //simple rule:
       var difference = 21 - this.hand.total();
 
       if (difference > 5) {
         this.doHit();
-      } else {
+      }
+      else {
         this.doStick();
       }
     }
   }
 
-  Player.prototype.deal = function(deck) {
+  Player.prototype.deal = function (deck) {
     this.hand = new Hand([deck.pickNextCard(), deck.pickNextCard()]);
     this.isOnTurn = false;
     this.sticking = false;
@@ -88,8 +90,8 @@ angular.module("blackjack-game").factory("Player", ["Hand", function(Hand) {
     this.doBet(10); //minimal bet
   }
 
-  Player.prototype.isBankrupt = function() {
-    if(this.chips < 0) return true;
+  Player.prototype.isBankrupt = function () {
+    if (this.chips < 0) return true;
     return !this.game.getStatus() && this.chips <= 0;
   }
 

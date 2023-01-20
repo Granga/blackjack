@@ -1,6 +1,6 @@
-angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", function(Deck, Player, $log) {
+angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", function (Deck, Player, $log) {
 
-  var Game = function(numPlayers) {
+  var Game = function (numPlayers) {
     this.deck = new Deck();
     this.dealer = null;
     this.humans = [];
@@ -11,7 +11,7 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", func
     this.isInProgress = true;
   }
 
-  Game.prototype.next = function() {
+  Game.prototype.next = function () {
     console.log("NEXT! said player", this.getCurrentPlayer().id);
     if (this.checkEnded()) return;
 
@@ -29,19 +29,20 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", func
     if (p.isDealer) {
       console.log("Player", p.id, "is dealer. Performing automove.");
       p.doAutoplay();
-    } else {
+    }
+    else {
       p.isOnTurn = true;
     }
   }
 
-  Game.prototype.checkEnded = function() {
+  Game.prototype.checkEnded = function () {
     if (this.hasEnded) return false;
 
-    var anybodyPlaying = _.some(this.players, function(p) {
+    var anybodyPlaying = _.some(this.players, function (p) {
       return p.isPlaying();
     });
 
-    var humansBusted = _.every(this.humans, function(h) {
+    var humansBusted = _.every(this.humans, function (h) {
       return h.isBusted();
     });
 
@@ -56,19 +57,19 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", func
     return this.hasEnded;
   }
 
-  Game.prototype.getStatus = function() {
+  Game.prototype.getStatus = function () {
     return !this.hasEnded;
   }
 
-  Game.prototype.getCurrentPlayer = function() {
+  Game.prototype.getCurrentPlayer = function () {
     return this.players[this.currentIndex];
   }
 
-  Game.prototype.getDealer = function() {
+  Game.prototype.getDealer = function () {
     return this.dealer;
   }
 
-  Game.prototype.makePlayers = function(numPlayers) {
+  Game.prototype.makePlayers = function (numPlayers) {
     var players = [];
     for (var i = 0; i < numPlayers; i++) {
       this.humans.push(new Player(this.deck, false, i + 1, this, 100));
@@ -81,16 +82,16 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", func
     return players;
   }
 
-  Game.prototype.getDealer = function() {
+  Game.prototype.getDealer = function () {
     return _.findWhere(this.players, {
       isDealer: true
     });
   }
 
-  Game.prototype.deal = function() {
+  Game.prototype.deal = function () {
     var deck = this.deck = new Deck();
 
-    _.each(this.players, function(p) {
+    _.each(this.players, function (p) {
       p.deal(deck);
     });
 
@@ -99,11 +100,12 @@ angular.module("blackjack-game").factory("Game", ["Deck", "Player", "$log", func
     this.hasEnded = false;
   }
 
-  Game.prototype.doPayout = function() {
-    _.each(this.players, function(p) {
+  Game.prototype.doPayout = function () {
+    _.each(this.players, function (p) {
       if (p.getStatus() == "won") {
         p.chips += (p.bet * 2);
-      } else if (p.getStatus() == "draw") {
+      }
+      else if (p.getStatus() == "draw") {
         p.chips += p.bet;
       }
     });
