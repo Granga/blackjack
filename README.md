@@ -1,5 +1,5 @@
 # blackjack
 
-https://blackjack-one.herokuapp.com/
+https://granga.github.io/blackjack/
 
-Made to practice MeteorJS.
+Made for a job interview.
